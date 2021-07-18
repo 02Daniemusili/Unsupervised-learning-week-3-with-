@@ -1,0 +1,126 @@
+---
+title: "dimensionality reduction"
+author: "Daniel"
+date: "7/15/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+**our main objective ofthe project is to perform dimensional reduction to help in data visualization**
+
+## DIMENSIONALITY REDUCTION (PCA)
+```{r,echo=TRUE}
+#loading the first dataset to the environment to use in the first session of the project
+load_dd<-read.csv("http://bit.ly/CarreFourDataset")
+head(load_dd)
+```
+
+```{r}
+#checking the statistical summary of the dataset 
+summary(load_dd)
+```
+
+```{r}
+str(load_dd)
+```
+
+
+```{r}
+#checking the dataset whether there is any null values
+colSums(is.na(load_dd))
+```
+
+```{r}
+#checking the data in column "gross.margin.percentage"
+unique(load_dd$gross.margin.percentage)
+```
+
+
+
+```{r}
+hist(load_dd$gross.margin.percentage, col = "brown")
+```
+```{r,echo=TRUE}
+#selecting numerical variables only
+Sales <- load_dd[,c(6,7,8,12,14,15,16)]
+head(Sales)
+```
+
+```{r,echo=TRUE}
+library("corrplot")
+mydata.rcorr = cor(as.matrix(Sales))
+mydata.rcorr
+corrplot(mydata.rcorr)
+```
+
+
+```{r,echo=TRUE}
+#loading libraries 
+library(openxlsx)
+library(reshape2)
+
+library(plyr)
+
+library(scales)
+
+library(ggplot2)
+
+library("devtools")
+
+library(grid)
+install_github("vqv/ggbiplot",dependencies = TRUE)
+```
+
+
+
+```{r,echo=TRUE}
+#undelecting none zero and non constants
+sales_data<-Sales[,apply(Sales, 2,var)!=0]
+head(sales_data)
+```
+
+
+
+```{r,echo=TRUE}
+#performing PCA on the sales dataset
+sale.pca <- prcomp(Sales[,c(1:7)], center = TRUE, scale. = FALSE)
+summary(sale.pca)
+```
+
+```{r,echo=TRUE}
+#Then Loading our ggbiplot library
+ 
+library("ggbiplot")
+ggbiplot(sale.pca)
+```
+
+```{r,echo=TRUE}
+# ploting our pca adding labels
+ggbiplot(sale.pca,ellipse=TRUE,  labels=rownames(load_dd), obs.scale = 0.01, var.scale = 0.01)
+```
+## Dimensionality Reduction(T- SNE)
+
+```{r}
+# Loading our tnse library
+ 
+library(Rtsne)
+require(tsne)
+```
+
+```{r}
+trn <- data.matrix(Sales)
+cols <- rainbow(10)
+require(tsne)
+# Here, K is 2, since we use tsne to map the rows to a 2D representation (map).
+ecb = function(x, y){ plot(x, t='n'); text(x, labels=trn[,7], col=cols[trn[,7] +1]); }
+tsne_res = tsne(trn[,1:7], epoch_callback = ecb, perplexity=50, epoch=50)
+```
+
+from the above diagram t-sne makes a good job in reducing the dimensions and clustering, the only disadvantage is experinced is that it takes long time to complete its execution
+
+

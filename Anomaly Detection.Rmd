@@ -1,0 +1,60 @@
+---
+title: "Anomality Detection"
+author: "Daniel"
+date: "7/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r,echo=TRUE}
+#loading the data in our environment
+df <- read.csv("http://bit.ly/CarreFourSalesDataset")
+head(df)
+```
+
+```{r}
+#checking the statistical summary of our dataset
+summary(df)
+```
+
+```{r,echo=TRUE}
+#checking the presence of null values
+colSums(is.na(df))
+```
+
+```{r,echo=TRUE}
+#loading tidyverse and normalize
+install.packages("anomalize",repos = "http://cran.us.r-project.org")
+library(tidyverse)
+library(anomalize )
+```
+
+```{r,echo=TRUE}
+boxplot(df$Sales, col = "blue")
+```
+
+```{r,echo=TRUE}
+install.packages("tibbletime",repos = "http://cran.us.r-project.org")
+#checking dataset dimensions
+dim(df)
+```
+
+```{r,echo=TRUE}
+#convert df to tibble
+df <- as_tibble(df)
+class(df)
+```
+
+```{r}
+#df %>%
+#   time_decompose(count) %>%
+#   anomalize(remainder) %>%
+#   time_recompose() %>%
+#   plot_anomalies(time_recomposed = TRUE, ncol = 3, alpha_dots = 0.5)
+```
+

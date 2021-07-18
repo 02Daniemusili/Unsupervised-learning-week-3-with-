@@ -1,0 +1,109 @@
+---
+title: "Feature Selection"
+author: "Daniel"
+date: "7/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Our main Objective is to perfom feature selection to identify the most important features in our dataset
+
+```{r,echo=TRUE}
+#loading the first data set to the environment to use in the first session of the project
+load_dd<-read.csv("http://bit.ly/CarreFourDataset")
+head(load_dd)
+```
+
+
+```{r}
+#checking for null values 
+colSums(is.na(load_dd))
+```
+
+```{r,echo=TRUE}
+#checking statistical summary of our dataset
+summary(load_dd)
+```
+from the summary above we can conclude that the data in the gross.margin.percentage is a constant. this is because the min and the max values are the same and the mean are the same
+
+
+
+
+
+```{r,echo=TRUE}
+Sales_df <- load_dd[,c(6,7,8,12,14,15,16)]
+head(Sales_df)
+```
+
+## Feature Selection
+
+```{r}
+
+# Installing and loading our caret package
+# ---
+# 
+suppressWarnings(
+        suppressMessages(if
+                         (!require(caret, quietly=TRUE))
+                install.packages("caret")))
+library(caret)
+
+
+```
+
+```{r}
+
+# Installing and loading the corrplot package for plotting
+# ---
+# 
+suppressWarnings(
+        suppressMessages(if
+                         (!require(corrplot, quietly=TRUE))
+                install.packages("corrplot")))
+library(corrplot)
+
+
+```
+
+```{r,echo=TRUE}
+
+# Calculating the correlation matrix
+
+correlationMatrix <- cor(Sales_df)
+
+# Find attributes that are highly correlated
+
+highlyCorrelated <- findCorrelation(correlationMatrix, cutoff=0.6)
+
+# Highly correlated attributes
+
+highlyCorrelated
+
+names(Sales_df[,highlyCorrelated])
+```
+
+```{r,echo=TRUE}
+# We can remove the variables with a higher correlation 
+# and comparing the results graphically as shown below
+# ---
+# 
+# Removing Redundant Features 
+# ---
+# 
+Dataset2<-Sales_df[-highlyCorrelated]
+
+# Performing our graphical comparison 
+# ---
+# 
+par(mfrow = c(1, 2))
+corrplot(correlationMatrix, order = "hclust")
+corrplot(cor(Dataset2), order = "hclust")
+
+```
+
+from the the correlation plot we could see that there are there re only few columns which can be used in decision making which are
+**Ratings**, **unit.price**,**quantity**
+

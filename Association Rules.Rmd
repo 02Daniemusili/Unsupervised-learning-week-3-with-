@@ -1,0 +1,126 @@
+---
+title: "Association Rules"
+author: "Daniel"
+date: "7/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+## Association Rules
+
+*the main aim of the project is performing asscociation analysis using the respective algorithms*
+
+Reading the Data
+```{r}
+#Installing packages
+#install.packages("arules")
+library(arules)
+```
+
+```{r}
+#Loading our data 
+
+Transactions<-read.transactions("http://bit.ly/SupermarketDatasetII", sep = ",")
+Transactions
+```
+Checking the Data 
+
+```{r}
+# Verifying the object's class
+# ---
+# This should show us transactions as the type of data that we will need
+# ---
+# 
+class(Transactions)
+```
+Previewing our first 5 transactions data results
+
+```{r}
+inspect(Transactions[1:5])
+```
+viewing the items that make up our dataframe,
+
+```{r}
+items<-as.data.frame(itemLabels(Transactions))
+colnames(items) <- "Item"
+head(items, 10)
+```
+ 
+solution implementation and modeling
+
+```{r}
+# Generating a summary of the transaction dataset
+#Informing the marketing department on the most relevant marketing strategies that will result in the highest no. of sales
+# 
+summary(Transactions)
+```
+the frequently purchased imtems are as below
+ *Mineral Water* 
+ *Eggs *
+ *Spaghetti* 
+ *French Fries* 
+ *Chocolate *
+
+ the frequency of some articles 
+
+```{r}
+itemFrequency(Transactions[, 5:10],type = "absolute")
+round(itemFrequency(Transactions[, 5:10],type = "relative")*100,2)
+```
+
+```{r}
+par(mfrow = c(1, 2))
+# plot the frequency of items
+itemFrequencyPlot(Transactions, topN = 10,col="darkgreen")
+itemFrequencyPlot(Transactions, support = 0.1,col="darkred")
+```
+model on association rules we use Min Support as 0.001 and confidence as 0.8
+
+```{r}
+rules <- apriori (Transactions, parameter = list(supp = 0.001, conf = 0.8))
+rules
+```
+ 
+Building a apriori model with Min Support as 0.002 and confidence as 0.8
+
+```{r}
+rules2 <- apriori (Transactions,parameter = list(supp = 0.002, conf = 0.8)) 
+```
+
+Building apriori model with Min Support as 0.002 and confidence as 0.6
+
+```{r}
+rules3 <- apriori (Transactions, parameter = list(supp = 0.001, conf = 0.6)) 
+rules2
+rules3
+```
+
+Observing rules built in our model i.e. first 5 model rules
+ 
+
+```{r}
+inspect(rules[1:5])
+# Ordering these rules by a criteria 
+# 
+rules<-sort(rules, by="confidence", decreasing=TRUE)
+inspect(rules[1:5])
+```
+
+
+
+# Conclusion and Recommendation
+
+the most sold items are
+*Mineral Water*
+*Eggs*
+*Spaghetti*
+*French Fries*
+*Chocolate*
+ 
+
+
